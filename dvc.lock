@@ -1,0 +1,28 @@
+schema: '2.0'
+stages:
+  download-data:
+    cmd: papermill notebooks/01-download-data.ipynb reports/notebooks/01-download-data.ipynb
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 0a90b238d1e40413b175c353bb4d07e1.dir
+      size: 1312522
+      nfiles: 1
+    - path: notebooks/01-download-data.ipynb
+      hash: md5
+      md5: ff7166c1ab1655dca07b0d4a642c1c01
+      size: 1089
+    - path: params.yaml
+      hash: md5
+      md5: d41d8cd98f00b204e9800998ecf8427e
+      size: 0
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+    - path: reports/notebooks/01-download-data.ipynb
+      hash: md5
+      md5: 4863de46566f2a3296e6afd7a07c04fb
+      size: 2816

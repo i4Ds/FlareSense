@@ -1,0 +1,5 @@
+[core]
+    autostage = true
+['remote "origin"']
+    url = s3://dvc
+    endpointurl = https://dagshub.com/Solar-Flare-Classification/FlareSense.s3

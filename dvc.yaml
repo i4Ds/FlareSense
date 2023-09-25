@@ -1,0 +1,12 @@
+stages:
+  download-data:
+    cmd: papermill notebooks/01-download-data.ipynb reports/notebooks/01-download-data.ipynb
+    deps:
+      - params.yaml
+      - data/raw
+      - notebooks/01-download-data.ipynb
+    outs:
+      - data/processed:
+          persist: true
+      - reports/notebooks/01-download-data.ipynb:
+          persist: true
