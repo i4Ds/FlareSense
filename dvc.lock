@@ -5,9 +5,9 @@ stages:
     deps:
     - path: data/raw
       hash: md5
-      md5: 0a90b238d1e40413b175c353bb4d07e1.dir
+      md5: c8c3889ab61b2b080ec6a9ec5074ced7.dir
       size: 1312522
-      nfiles: 1
+      nfiles: 2
     - path: notebooks/01-download-data.ipynb
       hash: md5
       md5: ff7166c1ab1655dca07b0d4a642c1c01
@@ -19,9 +19,9 @@ stages:
     outs:
     - path: data/processed
       hash: md5
-      md5: d751713988987e9331980363e24189ce.dir
+      md5: 1993d8677954f59c617541f0df0c2323.dir
       size: 0
-      nfiles: 0
+      nfiles: 1
     - path: reports/notebooks/01-download-data.ipynb
       hash: md5
       md5: 4863de46566f2a3296e6afd7a07c04fb
