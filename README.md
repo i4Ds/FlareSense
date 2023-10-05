@@ -31,7 +31,7 @@ Hier geht es zu unserer Zotero Gruppe:
 ## DagsHub
 Hier geht es zu unserer DagsHub Organisation: 
 
-[Link zur Organisation](https://dagshub.com/org/Solar-Flare-Classification/home)
+[Link zur Organisation](https://dagshub.com/org/FlareSense/home)
 
 ## Instructions
 1. Clone the repo.
