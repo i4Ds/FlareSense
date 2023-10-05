@@ -10,8 +10,8 @@ stages:
       nfiles: 2
     - path: notebooks/01-download-data.ipynb
       hash: md5
-      md5: ff7166c1ab1655dca07b0d4a642c1c01
-      size: 1089
+      md5: 64f8157e85d41022a874820fa633c2e1
+      size: 5544
     - path: params.yaml
       hash: md5
       md5: d41d8cd98f00b204e9800998ecf8427e
@@ -24,5 +24,5 @@ stages:
       nfiles: 1
     - path: reports/notebooks/01-download-data.ipynb
       hash: md5
-      md5: 4863de46566f2a3296e6afd7a07c04fb
-      size: 2816
+      md5: e72cd8e0bb6545ce03ea1c1be17a3cd0
+      size: 2801
