@@ -1,14 +1,14 @@
 # Pro5D - Klassifikation von Sonneneruptionen mittels Machine Learning und e-Callisto Netzwerk
 Dieses Projekt wird im Rahmen der Studiengangs B.Sc. Data Science der Fachhochschule Nordwestschweiz bearbeitet.
 
-## SolarStormTroopers
+## Projektarbeiter
 Dieses Projekt wird von folgenden Studenten bearbeitet:
 Name | GitHub Handle
 :-- | :--
 Patrick Schürmann | [@patschue](https://github.com/patschue)
 Gabriel Torres Gamez | [@gabrieltorresgamez](https://github.com/gabrieltorresgamez)
 
-## Docs
+## Dokumentation
 Hier geht es zur Dokumentation:
 
 [Link zur Wiki](https://github.com/i4Ds/FlareSense/wiki)
@@ -18,8 +18,8 @@ Hier geht es zum Projekt Taskboard mit allen Tasks und Issues:
 
 [Link zum Taskboard](https://github.com/orgs/i4Ds/projects/11)
 
-## Discussions
-Um Fragen, Ideen oder Wünsche zu stellen, kann man das bei den Discussions machen:
+## Diskussionen
+Um Fragen, Ideen oder Wünsche zu stellen, kann man das bei den "Discussions" machen:
 
 [Link zu den Discussions](https://github.com/i4Ds/FlareSense/discussions)
 
