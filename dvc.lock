@@ -1,28 +1,23 @@
 schema: '2.0'
 stages:
-  download-data:
-    cmd: papermill notebooks/01-download-data.ipynb reports/notebooks/01-download-data.ipynb
+  get-classifications:
+    cmd: papermill notebooks/01-get-classifications.ipynb reports/notebooks/01-get-classifications.ipynb
     deps:
-    - path: data/raw
-      hash: md5
-      md5: c8c3889ab61b2b080ec6a9ec5074ced7.dir
-      size: 1312522
-      nfiles: 2
-    - path: notebooks/01-download-data.ipynb
-      hash: md5
-      md5: 64f8157e85d41022a874820fa633c2e1
-      size: 5544
+    - path: data/raw/sunburst_images.zip
+      md5: 9f02fac2be92b0b663e374fed43b4ef7
+      size: 100825934
+    - path: notebooks/01-get-classifications.ipynb
+      md5: 1dd1d4b71381bcff77ca25275f494fb9
+      size: 3003
     - path: params.yaml
-      hash: md5
       md5: d41d8cd98f00b204e9800998ecf8427e
       size: 0
     outs:
     - path: data/processed
-      hash: md5
-      md5: 1993d8677954f59c617541f0df0c2323.dir
-      size: 0
+      md5: f498bfc3171954c9e4e358f15086edb1.dir
+      size: 11993519
       nfiles: 1
-    - path: reports/notebooks/01-download-data.ipynb
-      hash: md5
-      md5: e72cd8e0bb6545ce03ea1c1be17a3cd0
-      size: 2801
+    - path: reports/notebooks
+      md5: 11950c7b83bd01953687a70e08a74192.dir
+      size: 13316
+      nfiles: 1
