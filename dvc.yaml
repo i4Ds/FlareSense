@@ -1,12 +1,11 @@
 stages:
-  get-classifications:
-    cmd: papermill notebooks/01-get-classifications.ipynb reports/notebooks/01-get-classifications.ipynb
+  explorative-data-analysis:
+    cmd: papermill notebooks/04-explorative-data-analysis.ipynb reports/notebooks/04-explorative-data-analysis.ipynb
     deps:
       - params.yaml
-      - data/raw/sunburst_images.zip
-      - notebooks/01-get-classifications.ipynb
+      - data/processed/sunburst_images.csv
+      - data/raw/ecallisto_ng_zipped.zip
+      - notebooks/04-explorative-data-analysis.ipynb
     outs:
-      - data/processed:
-          persist: true
-      - reports/notebooks:
+      - reports/notebooks/04-explorative-data-analysis.ipynb:
           persist: true
