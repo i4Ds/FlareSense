@@ -17,5 +17,5 @@ stages:
       size: 0
     outs:
     - path: reports/notebooks/04-explorative-data-analysis.ipynb
-      md5: f701e37216463585202ad1cb1ef44b92
-      size: 12515
+      md5: 7a4d0bf41455f00c5a6dcde10acdbfd6
+      size: 12514

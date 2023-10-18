@@ -3,10 +3,10 @@ Dieses Projekt wird im Rahmen der Studiengangs B.Sc. Data Science der Fachhochsc
 
 ## Projektarbeiter
 Dieses Projekt wird von folgenden Studenten bearbeitet:
-Name | GitHub Handle
-:-- | :--
-Patrick Schürmann | [@patschue](https://github.com/patschue)
-Gabriel Torres Gamez | [@gabrieltorresgamez](https://github.com/gabrieltorresgamez)
+| Name                 | GitHub Handle                                                |
+| :------------------- | :----------------------------------------------------------- |
+| Patrick Schürmann    | [@patschue](https://github.com/patschue)                     |
+| Gabriel Torres Gamez | [@gabrieltorresgamez](https://github.com/gabrieltorresgamez) |
 
 ## Dokumentation
 Hier geht es zur Dokumentation:
@@ -48,7 +48,7 @@ Hier geht es zu unserer DagsHub Organisation:
     ├── models             <- Trained and serialized models, model predictions, or model summaries
     ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering)
     │                         and a short `-` delimited description, e.g.
-    │                         `1.0-initial-data-exploration`.
+    │                         `01-initial-data-exploration`.
     ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
     ├── reports            <- Generated notebooks, metrics, figures, and other reports.
     ├── .dvcignore         <- Files and directories to ignore by DVC.
@@ -57,7 +57,7 @@ Hier geht es zu unserer DagsHub Organisation:
     ├── LICENSE            <- GNU General Public License v3.0.
     ├── Makefile           <- Makefile with commands.
     ├── params.yaml        <- The parameters for the data pipeline.
-    ├── raw_data.yaml      <- Version control config for the raw data.
+    ├── data.yaml          <- DVC data registry.
     ├── README.md          <- The top-level README for developers using this project.
     ├── dvc.lock           <- The version definition of each dependency, stage, and output from the 
     │                         data pipeline.
