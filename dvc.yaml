@@ -1,11 +1,19 @@
 stages:
-  explorative-data-analysis:
-    cmd: papermill notebooks/04-explorative-data-analysis.ipynb reports/notebooks/04-explorative-data-analysis.ipynb
+  dataloader:
+    cmd: papermill notebooks/01-dataclass-tester.ipynb reports/notebooks/01-dataclass-tester.ipynb
     deps:
       - params.yaml
-      - data/processed/sunburst_images.csv
-      - data/raw/ecallisto_ng_zipped.zip
-      - notebooks/04-explorative-data-analysis.ipynb
+      - data/raw/burst_images.zip
+      - notebooks/01-dataclass-tester.ipynb
+    outs:
+      - reports/notebooks/01-dataclass-tester.ipynb:
+          persist: true
+  explorative-data-analysis:
+    cmd: papermill notebooks/02-explorative-data-analysis.ipynb reports/notebooks/02-explorative-data-analysis.ipynb
+    deps:
+      - params.yaml
+      - data/raw/burst_images.zip
+      - notebooks/02-explorative-data-analysis.ipynb
     outs:
       - reports/notebooks/04-explorative-data-analysis.ipynb:
           persist: true

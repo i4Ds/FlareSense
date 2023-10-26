@@ -1,17 +1,14 @@
 schema: '2.0'
 stages:
   explorative-data-analysis:
-    cmd: papermill notebooks/04-explorative-data-analysis.ipynb reports/notebooks/04-explorative-data-analysis.ipynb
+    cmd: papermill notebooks/02-explorative-data-analysis.ipynb reports/notebooks/02-explorative-data-analysis.ipynb
     deps:
-    - path: data/processed/sunburst_images.csv
-      md5: 67a0702b8e2a1f8f2a3d163868a46a70
-      size: 9161271
-    - path: data/raw/ecallisto_ng_zipped.zip
-      md5: 049f6906d63aaa2f48e8ba0b5b5d2cd1
-      size: 2703664382
-    - path: notebooks/04-explorative-data-analysis.ipynb
-      md5: f44031bb6aad5231984c46013597f957
-      size: 9734
+    - path: data/raw/burst_images.zip
+      md5: 1c7ff50108d668c7a296343494f7e128
+      size: 2436373613
+    - path: notebooks/02-explorative-data-analysis.ipynb
+      md5: d3c19cf72dcb25e4386589b7255276ff
+      size: 685
     - path: params.yaml
       md5: d41d8cd98f00b204e9800998ecf8427e
       size: 0
@@ -19,3 +16,19 @@ stages:
     - path: reports/notebooks/04-explorative-data-analysis.ipynb
       md5: 7a4d0bf41455f00c5a6dcde10acdbfd6
       size: 12514
+  dataloader:
+    cmd: papermill notebooks/01-dataclass-tester.ipynb reports/notebooks/01-dataclass-tester.ipynb
+    deps:
+    - path: data/raw/burst_images.zip
+      md5: 1c7ff50108d668c7a296343494f7e128
+      size: 2436373613
+    - path: notebooks/01-dataclass-tester.ipynb
+      md5: cc66c43cf9a2081a5103d63cfbcae924
+      size: 6585
+    - path: params.yaml
+      md5: d41d8cd98f00b204e9800998ecf8427e
+      size: 0
+    outs:
+    - path: reports/notebooks/01-dataclass-tester.ipynb
+      md5: fcc523e00e174f3da833718f41f48870
+      size: 11215

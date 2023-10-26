@@ -6,6 +6,4 @@
 .DS_Store
 
 # Ecallisto downloaded/unzipped data
-data/raw/ecallisto_ng_downloaded/
-data/raw/ecallisto_ng_unzipped/
-data/processed/sunburst_images_predownload.csv
+data/raw/burst_images

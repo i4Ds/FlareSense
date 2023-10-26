@@ -1,8 +1,5 @@
 outs:
-- md5: 085251c1fc469fc990dd5f1f29ae3e25.dir
+- md5: 021cb2ec91106d2476899607c9b6451d.dir
   path: data/raw
-  size: 2805802838
-  nfiles: 3
-- md5: 67a0702b8e2a1f8f2a3d163868a46a70
-  path: data/processed/sunburst_images.csv
-  size: 9161271
+  size: 2438141939
+  nfiles: 2
