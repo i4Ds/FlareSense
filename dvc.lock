@@ -7,15 +7,15 @@ stages:
       md5: 1c7ff50108d668c7a296343494f7e128
       size: 2436373613
     - path: notebooks/02-explorative-data-analysis.ipynb
-      md5: d3c19cf72dcb25e4386589b7255276ff
-      size: 685
+      md5: 8bda93292b365408b59b8a091c829c20
+      size: 582
     - path: params.yaml
       md5: d41d8cd98f00b204e9800998ecf8427e
       size: 0
     outs:
-    - path: reports/notebooks/04-explorative-data-analysis.ipynb
-      md5: 7a4d0bf41455f00c5a6dcde10acdbfd6
-      size: 12514
+    - path: reports/notebooks/02-explorative-data-analysis.ipynb
+      md5: f4f574efad974565a83d9b4c3e89576e
+      size: 1586
   dataloader:
     cmd: papermill notebooks/01-dataclass-tester.ipynb reports/notebooks/01-dataclass-tester.ipynb
     deps:
@@ -23,12 +23,28 @@ stages:
       md5: 1c7ff50108d668c7a296343494f7e128
       size: 2436373613
     - path: notebooks/01-dataclass-tester.ipynb
-      md5: cc66c43cf9a2081a5103d63cfbcae924
-      size: 6585
+      md5: f71ca2852aee7546dd9139eeda88c84d
+      size: 4153
     - path: params.yaml
       md5: d41d8cd98f00b204e9800998ecf8427e
       size: 0
     outs:
     - path: reports/notebooks/01-dataclass-tester.ipynb
-      md5: fcc523e00e174f3da833718f41f48870
-      size: 11215
+      md5: d6026cf6ee7bc894d41ec3ff8089795b
+      size: 10049
+  unzip:
+    cmd: papermill notebooks/00-unzip.ipynb reports/notebooks/00-unzip.ipynb
+    deps:
+    - path: data/raw/burst_images.zip
+      md5: 1c7ff50108d668c7a296343494f7e128
+      size: 2436373613
+    - path: notebooks/00-unzip.ipynb
+      md5: 87a281e146c9f9ec30dad8a9d1fc8394
+      size: 1473
+    - path: params.yaml
+      md5: d41d8cd98f00b204e9800998ecf8427e
+      size: 0
+    outs:
+    - path: reports/notebooks/00-unzip.ipynb
+      md5: 4dfea6250f60c69444d9d226bc7ab85b
+      size: 3664

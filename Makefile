@@ -23,6 +23,7 @@ pull:
 
 ## Reproduce the DVC pipeline - recompute any modified outputs such as processed data or trained models
 repro:
+	dvc repro -sf unzip
 	dvc repro
 
 ## Force Reproduce all the Stages on the DVC pipeline

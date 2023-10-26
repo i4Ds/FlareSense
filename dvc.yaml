@@ -1,4 +1,13 @@
 stages:
+  unzip:
+    cmd: papermill notebooks/00-unzip.ipynb reports/notebooks/00-unzip.ipynb
+    deps:
+      - params.yaml
+      - data/raw/burst_images.zip
+      - notebooks/00-unzip.ipynb
+    outs:
+      - reports/notebooks/00-unzip.ipynb:
+          persist: true
   dataloader:
     cmd: papermill notebooks/01-dataclass-tester.ipynb reports/notebooks/01-dataclass-tester.ipynb
     deps:
@@ -15,5 +24,5 @@ stages:
       - data/raw/burst_images.zip
       - notebooks/02-explorative-data-analysis.ipynb
     outs:
-      - reports/notebooks/04-explorative-data-analysis.ipynb:
+      - reports/notebooks/02-explorative-data-analysis.ipynb:
           persist: true
