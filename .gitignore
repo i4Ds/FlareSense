@@ -163,6 +163,6 @@ cython_debug/
 .DS_Store
 
 # DVC
-/data/
-/reports/
-/models/
+/data
+/reports
+/models

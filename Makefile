@@ -21,11 +21,13 @@ push:
 pull:
 	dvc pull
 
-## Reproduce the DVC pipeline - recompute any modified outputs such as processed data or trained models
-repro:
-	dvc repro -sf unzip
-	dvc repro
-
-## Force Reproduce all the Stages on the DVC pipeline
-force-repro:
-	dvc repro -sf
+## Relink all dvc files
+relink:
+	# unprotect
+	dvc unprotect data
+	dvc unprotect models
+	dvc unprotect reports
+	# add
+	dvc add data
+	dvc add models
+	dvc add reports
