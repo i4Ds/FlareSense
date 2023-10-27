@@ -146,6 +146,6 @@ class ECallistoDataModule(L.LightningDataModule):
         subset_indices = dataset_subset.indices
 
         # Abrufen der Instrumentennamen für die gegebenen Indizes aus dem zugrunde liegenden Dataset
-        instruments = dataset_subset.dataset.getinstruments(indices=subset_indices)
+        instruments = [dataset_subset.dataset.get_instrument(dataset_subset.dataset.file_paths[i]) for i in subset_indices]
 
         return instruments
