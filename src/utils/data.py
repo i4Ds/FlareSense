@@ -5,6 +5,8 @@ import lightning as L
 from torch.utils.data import DataLoader, Dataset, Subset, random_split
 from torchvision import io
 
+import re
+
 # TODO: Offload to .py file and add instrument selection
 
 
@@ -37,13 +39,29 @@ class ECallistoDataset(Dataset):
         label = os.path.dirname(self.file_paths[idx]).split("/")[-1]
         filename = os.path.basename(self.file_paths[idx])
 
-        return image, filename, label
+        # Extrahieren des Instruments aus dem Dateinamen
+        instrument = self.get_instrument(filename)
+
+        return image, filename, label, instrument
 
     def getlabels(self):
         return [
             os.path.dirname(self.file_paths[idx]).split("/")[-1]
             for idx in range(len(self.file_paths))
         ]
+
+    def get_instrument(self, filename):
+        pattern = re.compile(r"\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}_(.*?)_(?:\d|None)")
+
+        # Suchen Sie nach Übereinstimmungen im Dateinamen
+        match = pattern.search(filename)
+        if match:
+            instrument_name = match.group(1)
+            return instrument_name
+        else:
+            return "Unknown" 
+
+
 
 
 class ECallistoDataModule(L.LightningDataModule):
@@ -107,3 +125,27 @@ class ECallistoDataModule(L.LightningDataModule):
         return DataLoader(
             self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers
         )
+    
+    def get_dataset_instruments(self, dataset_type):
+        assert dataset_type in ["train", "val", "test"], "Unbekannter Dataset-Typ"
+
+        # Wählen Sie das richtige Subset basierend auf dem dataset_type
+        dataset_subset = None
+        if dataset_type == "train":
+            dataset_subset = self.train_dataset
+        elif dataset_type == "val":
+            dataset_subset = self.val_dataset
+        elif dataset_type == "test":
+            dataset_subset = self.test_dataset
+
+        # Stellen Sie sicher, dass dataset_subset ein Subset-Objekt und kein None ist
+        if dataset_subset is None:
+            raise ValueError(f"Dataset-Typ {dataset_type} nicht gefunden")
+
+        # Abrufen der Indizes für das aktuelle Subset
+        subset_indices = dataset_subset.indices
+
+        # Abrufen der Instrumentennamen für die gegebenen Indizes aus dem zugrunde liegenden Dataset
+        instruments = dataset_subset.dataset.getinstruments(indices=subset_indices)
+
+        return instruments
