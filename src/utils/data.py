@@ -33,7 +33,7 @@ class ECallistoDataset(Dataset):
         if self.transform:
             image = self.transform(image)
 
-        image = image.squeeze()
+        # image = image.squeeze()
 
         # Extrahieren der Klasse aus dem Ordnernamen
         label = os.path.dirname(self.file_paths[idx]).split("/")[-1]
