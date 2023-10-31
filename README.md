@@ -70,7 +70,7 @@ Finally, run `make push` to push the data to DagsHub.
     ├── LICENSE            <- GNU General Public License v3.0.
     ├── Makefile           <- Makefile with commands.
     ├── models.dvc         <- DVC models/ folder registry.
-    ├── params.yaml        <- The parameters for the data pipeline.
+    ├── params.yml        <- The parameters for the data pipeline.
     ├── README.md          <- The top-level README for developers using this project.
     ├── reports.dvc        <- DVC reports/ folder registry.
     └── requirements.txt   <- The requirements file for reproducing the analysis environment.
