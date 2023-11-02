@@ -1,71 +1,40 @@
 import os
-import torch
+import torchvision
+import pandas as pd
 import lightning as L
-
 from torch.utils.data import DataLoader, Dataset, Subset, random_split
-from torchvision import io
-
-import re
-
-# TODO: Offload to .py file and add instrument selection
 
 
 class ECallistoDataset(Dataset):
-    def __init__(self, data_folder, transform=None):
-        self.data_folder = data_folder
+    def __init__(self, observations, transform=None):
+        self.observations = observations.reset_index(drop=True)
         self.transform = transform
 
-        # Pfade der Bild-Dateien
-        self.file_paths = []
-        for root, _, files in os.walk(data_folder):
-            for file in files:
-                if file.endswith(".png"):
-                    self.file_paths.append(os.path.join(root, file))
-
     def __len__(self):
-        return len(self.file_paths)
+        return len(self.observations)
 
     def __getitem__(self, idx):
-        # Laden des Bildes
-        image = io.read_image(self.file_paths[idx], mode=io.ImageReadMode.GRAY)
+        metadata = {key: str(value) for key, value in self.observations.iloc[idx].to_dict().items()}
 
-        # Anwenden der Transformationen
+        image = torchvision.io.read_image(metadata["file_path"], mode=torchvision.io.ImageReadMode.GRAY)
         if self.transform:
             image = self.transform(image)
 
-        # image = image.squeeze()
-
-        # Extrahieren der Klasse aus dem Ordnernamen
-        label = os.path.dirname(self.file_paths[idx]).split("/")[-1]
-        filename = os.path.basename(self.file_paths[idx])
-
-        # Extrahieren des Instruments aus dem Dateinamen
-        instrument = self.get_instrument(filename)
-
-        return image, filename, label, instrument
-
-    def getlabels(self):
-        return [
-            os.path.dirname(self.file_paths[idx]).split("/")[-1]
-            for idx in range(len(self.file_paths))
-        ]
-
-    def get_instrument(self, filename):
-        pattern = re.compile(r"\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2} \d{2}-\d{2}-\d{2}_(.*?)_(?:\d|None)")
-
-        # Suchen Sie nach Übereinstimmungen im Dateinamen
-        match = pattern.search(filename)
-        if match:
-            instrument_name = match.group(1)
-            return instrument_name
-        else:
-            return "Unknown" 
-
-
+        return image, metadata
 
 
 class ECallistoDataModule(L.LightningDataModule):
-    def __init__(self, data_folder, transform, batch_size, num_workers, val_ratio, test_ratio):
+    def __init__(
+        self,
+        data_folder,
+        transform,
+        batch_size,
+        num_workers,
+        val_ratio,
+        test_ratio,
+        split_by_date=False,
+        filter_instruments=[],
+    ):
         super().__init__()
         self.data_folder = data_folder
         self.transform = transform
@@ -73,40 +42,107 @@ class ECallistoDataModule(L.LightningDataModule):
         self.num_workers = num_workers
         self.val_ratio = val_ratio
         self.test_ratio = test_ratio
+        self.split_by_date = split_by_date
+        self.filter_instruments = filter_instruments
+
+    def __get_dataframe(self, data_folder):
+        # Pfade der Bild-Dateien einlesen
+        file_paths = []
+        for root, _, files in os.walk(data_folder):
+            file_paths.extend(os.path.join(root, file) for file in files if file.endswith(".png"))
+
+        # Erstellen eines DataFrames
+        observations = pd.DataFrame({"file_path": file_paths})
+        observations["file_name"] = observations["file_path"].apply(lambda x: os.path.basename(x))
+        observations["start"] = observations["file_name"].apply(lambda x: x.split("_")[0])
+        observations["start"] = pd.to_datetime(observations["start"], format="%Y-%m-%d %H-%M-%S")
+        observations["end"] = observations["file_name"].apply(lambda x: x.split("_")[1])
+        observations["end"] = pd.to_datetime(observations["end"], format="%Y-%m-%d %H-%M-%S")
+        observations["instrument"] = observations["file_name"].apply(lambda x: x.split("_")[2:5])
+        observations["instrument"] = observations["instrument"].apply(lambda x: "_".join(x))
+        observations["instrument"] = observations["instrument"].apply(lambda x: x.replace("_None", ""))
+        observations["label"] = observations["file_path"].apply(lambda x: os.path.basename(os.path.dirname(x)))
+        observations = observations.drop(columns="file_name")
+
+        return observations
 
     def setup(self, stage=None):
-        dataset = ECallistoDataset(self.data_folder, transform=self.transform)
+        self.observations = self.__get_dataframe(self.data_folder)
 
-        # Extract labels
-        labels = dataset.getlabels()
+        # split by date
+        if self.split_by_date:
+            dates = self.observations["start"].dt.date.unique()
 
-        # Split the dataset into train, validation, and test sets while preserving class distribution
-        class_indices = {label: [] for label in set(labels)}
-        for idx, label in enumerate(labels):
-            class_indices[label].append(idx)
-
-        train_indices, val_indices, test_indices = [], [], []
-        for indices in class_indices.values():
-            num_samples = len(indices)
+            num_samples = len(dates)
             num_val_samples = int(num_samples * self.val_ratio)
             num_test_samples = int(num_samples * self.test_ratio)
 
-            val_test_indices = random_split(
-                indices,
+            indices = random_split(
+                dates,
                 [
+                    num_samples - num_val_samples - num_test_samples,
                     num_val_samples,
                     num_test_samples,
-                    num_samples - num_val_samples - num_test_samples,
                 ],
             )
 
-            val_indices.extend(val_test_indices[0])
-            test_indices.extend(val_test_indices[1])
-            train_indices.extend(val_test_indices[2])
+            train_dates = dates[indices[0].indices]
+            val_dates = dates[indices[1].indices]
+            test_dates = dates[indices[2].indices]
 
-        self.train_dataset = Subset(dataset, train_indices)
-        self.val_dataset = Subset(dataset, val_indices)
-        self.test_dataset = Subset(dataset, test_indices)
+            train_indices = self.observations["start"].dt.date.isin(train_dates)
+            val_indices = self.observations["start"].dt.date.isin(val_dates)
+            test_indices = self.observations["start"].dt.date.isin(test_dates)
+
+            # filter instruments
+            if len(self.filter_instruments):
+                train_indices = train_indices & self.observations["instrument"].isin(self.filter_instruments)
+                val_indices = val_indices & self.observations["instrument"].isin(self.filter_instruments)
+                test_indices = test_indices & self.observations["instrument"].isin(self.filter_instruments)
+
+            # create datasets
+            self.train_dataset = ECallistoDataset(self.observations[train_indices], transform=self.transform)
+            self.val_dataset = ECallistoDataset(self.observations[val_indices], transform=self.transform)
+            self.test_dataset = ECallistoDataset(self.observations[test_indices], transform=self.transform)
+
+        # dont split by date, stratify by label
+        else:
+            train_indices, val_indices, test_indices = [], [], []
+            for label in self.observations["label"].unique():
+                label_indices = self.observations["label"] == label
+                label_indices = label_indices[label_indices].index
+
+                num_samples = len(label_indices)
+                num_val_samples = int(num_samples * self.val_ratio)
+                num_test_samples = int(num_samples * self.test_ratio)
+
+                indices = random_split(
+                    label_indices,
+                    [
+                        num_val_samples,
+                        num_test_samples,
+                        num_samples - num_val_samples - num_test_samples,
+                    ],
+                )
+
+                val_indices.extend(label_indices[indices[0].indices])
+                test_indices.extend(label_indices[indices[1].indices])
+                train_indices.extend(label_indices[indices[2].indices])
+
+            train_dataset = self.observations.iloc[train_indices]
+            val_dataset = self.observations.iloc[val_indices]
+            test_dataset = self.observations.iloc[test_indices]
+
+            # filter instruments
+            if len(self.filter_instruments):
+                train_dataset = train_dataset[train_dataset["instrument"].isin(self.filter_instruments)]
+                val_dataset = val_dataset[val_dataset["instrument"].isin(self.filter_instruments)]
+                test_dataset = test_dataset[test_dataset["instrument"].isin(self.filter_instruments)]
+
+            # create datasets
+            self.train_dataset = ECallistoDataset(train_dataset, transform=self.transform)
+            self.val_dataset = ECallistoDataset(val_dataset, transform=self.transform)
+            self.test_dataset = ECallistoDataset(test_dataset, transform=self.transform)
 
     def train_dataloader(self):
         return DataLoader(
@@ -117,35 +153,7 @@ class ECallistoDataModule(L.LightningDataModule):
         )
 
     def val_dataloader(self):
-        return DataLoader(
-            self.val_dataset, batch_size=self.batch_size, num_workers=self.num_workers
-        )
+        return DataLoader(self.val_dataset, batch_size=self.batch_size, num_workers=self.num_workers)
 
     def test_dataloader(self):
-        return DataLoader(
-            self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers
-        )
-    
-    def get_dataset_instruments(self, dataset_type):
-        assert dataset_type in ["train", "val", "test"], "Unbekannter Dataset-Typ"
-
-        # Wählen Sie das richtige Subset basierend auf dem dataset_type
-        dataset_subset = None
-        if dataset_type == "train":
-            dataset_subset = self.train_dataset
-        elif dataset_type == "val":
-            dataset_subset = self.val_dataset
-        elif dataset_type == "test":
-            dataset_subset = self.test_dataset
-
-        # Stellen Sie sicher, dass dataset_subset ein Subset-Objekt und kein None ist
-        if dataset_subset is None:
-            raise ValueError(f"Dataset-Typ {dataset_type} nicht gefunden")
-
-        # Abrufen der Indizes für das aktuelle Subset
-        subset_indices = dataset_subset.indices
-
-        # Abrufen der Instrumentennamen für die gegebenen Indizes aus dem zugrunde liegenden Dataset
-        instruments = [dataset_subset.dataset.get_instrument(dataset_subset.dataset.file_paths[i]) for i in subset_indices]
-
-        return instruments
+        return DataLoader(self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers)
