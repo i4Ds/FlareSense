@@ -23,11 +23,5 @@ pull:
 
 ## Relink all dvc files
 relink:
-	# unprotect
 	dvc unprotect data
-	dvc unprotect models
-	dvc unprotect reports
-	# add
 	dvc add data
-	dvc add models
-	dvc add reports

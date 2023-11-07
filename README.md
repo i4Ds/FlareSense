@@ -44,7 +44,7 @@ Hier geht es zu unserer DagsHub Organisation:
 ## Datamanagement
 The data in this repo is managed via DVC. Here are some useful commands:
 - `make pull` - Pulls the data from DagsHub.
-- `make relink` - After changes in the DVC Folders (data, models, reports) this command relinks the files in the repo.
+- `make relink` - After changes in the DVC Folders (data) this command relinks the files in the repo.
 - `make push` - Pushes the data to DagsHub.
 
 Before committing changes to the repo, make sure to run `make relink` to update the links to the data.
@@ -67,8 +67,6 @@ Finally, run `make push` to push the data to DagsHub.
     ├── data.dvc           <- DVC data/ folder registry.
     ├── LICENSE            <- GNU General Public License v3.0.
     ├── Makefile           <- Makefile with commands.
-    ├── models.dvc         <- DVC models/ folder registry.
     ├── params.yml        <- The parameters for the data pipeline.
     ├── README.md          <- The top-level README for developers using this project.
-    ├── reports.dvc        <- DVC reports/ folder registry.
     └── requirements.txt   <- The requirements file for reproducing the analysis environment.
