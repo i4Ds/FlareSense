@@ -57,12 +57,10 @@ Finally, run `make push` to push the data to DagsHub.
     ├── data
     │   ├── processed      <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump.
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
     ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering)
     │                         and a short `-` delimited description, e.g.
     │                         `01-initial-data-exploration`.
     ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    ├── reports            <- Generated notebooks, metrics, figures, and other reports.
     ├── src                <- Source code for use in this project.
     ├── .dvcignore         <- Files and directories to ignore by DVC.
     ├── .gitignore         <- Files and directories to ignore by Git.
