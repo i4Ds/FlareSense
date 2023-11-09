@@ -23,7 +23,6 @@ class ResNet50BinaryClassifier(pl.LightningModule):
         recall (BinaryRecall): Binary recall metric.
         test_labels (List[Tensor]): List of binary labels for test set.
         test_preds (List[Tensor]): List of binary predictions for test set.
-        val_outputs (List[Tensor]): List of model outputs for validation set.
         val_labels (List[Tensor]): List of binary labels for validation set.
         val_preds (List[Tensor]): List of binary predictions for validation set.
 
@@ -57,11 +56,12 @@ class ResNet50BinaryClassifier(pl.LightningModule):
         self.precision = BinaryPrecision(threshold=0.5)
         self.recall = BinaryRecall(threshold=0.5)
 
-        self.test_labels = []
-        self.test_preds = []
-        self.val_outputs = []
+        self.train_labels = []
+        self.train_preds = []
         self.val_labels = []
         self.val_preds = []
+        self.test_labels = []
+        self.test_preds = []
 
     def forward(self, x):
         return self.resnet50(x)
@@ -81,8 +81,24 @@ class ResNet50BinaryClassifier(pl.LightningModule):
         outputs, binary_labels = self.__step(batch)
         loss = nn.BCELoss()(outputs, binary_labels)
 
+        self.train_labels.append(binary_labels)
+        self.train_preds.append(outputs)
+
         self.log("train_loss", loss)
         return loss
+    
+    def on_train_epoch_end(self):
+        train_labels = torch.cat(self.train_labels, dim=0)
+        train_preds = torch.cat(self.train_preds, dim=0)
+
+        precision = self.precision(train_preds, train_labels)
+        recall = self.recall(train_preds, train_labels)
+
+        self.log("train_precision", precision)
+        self.log("train_recall", recall)
+
+        self.train_labels = []
+        self.train_preds = []  
 
     def test_step(self, batch, batch_idx):
         outputs, binary_labels = self.__step(batch)
@@ -109,10 +125,14 @@ class ResNet50BinaryClassifier(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         outputs, binary_labels = self.__step(batch)
+        loss = nn.BCELoss()(outputs, binary_labels)
 
         predictions = (outputs >= 0.5).int()
         self.val_labels.append(binary_labels.int())
         self.val_preds.append(predictions)
+
+        self.log("val_loss", loss)
+        return loss
 
     def on_validation_epoch_end(self):
         val_labels = torch.cat(self.val_labels, dim=0)
