@@ -128,4 +128,4 @@ class ResNet50BinaryClassifier(pl.LightningModule):
         self.val_preds = []
 
     def configure_optimizers(self):
-        return optim.Adam(self.parameters(), lr=0.001, weight_decay=0)
+        return optim.Adam(self.parameters(), lr=1e-3, weight_decay=1e-4)
