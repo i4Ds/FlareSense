@@ -1,4 +1,5 @@
 import os
+import math
 import torchvision
 import pandas as pd
 import lightning as L
@@ -32,6 +33,9 @@ class ECallistoDataModule(L.LightningDataModule):
         num_workers,
         val_ratio,
         test_ratio,
+        min_factor_val_test=2 / 3,
+        max_factor_val_test=3 / 2,
+        noburst_to_burst_ratio=1,
         split_by_date=False,
         filter_instruments=[],
     ):
@@ -42,6 +46,9 @@ class ECallistoDataModule(L.LightningDataModule):
         self.num_workers = num_workers
         self.val_ratio = val_ratio
         self.test_ratio = test_ratio
+        self.min_factor_val_test = min_factor_val_test
+        self.max_factor_val_test = max_factor_val_test
+        self.noburst_to_burst_ratio = noburst_to_burst_ratio
         self.split_by_date = split_by_date
         self.filter_instruments = filter_instruments
 
@@ -77,33 +84,80 @@ class ECallistoDataModule(L.LightningDataModule):
             num_val_samples = int(num_samples * self.val_ratio)
             num_test_samples = int(num_samples * self.test_ratio)
 
-            indices = random_split(
-                dates,
-                [
-                    num_samples - num_val_samples - num_test_samples,
-                    num_val_samples,
-                    num_test_samples,
-                ],
+            # if the imbalance is too big, try again
+            while True:
+                indices = random_split(
+                    dates,
+                    [
+                        num_samples - num_val_samples - num_test_samples,
+                        num_val_samples,
+                        num_test_samples,
+                    ],
+                )
+
+                train_dates = dates[indices[0].indices]
+                val_dates = dates[indices[1].indices]
+                test_dates = dates[indices[2].indices]
+
+                train_indices = self.observations["start"].dt.date.isin(train_dates)
+                val_indices = self.observations["start"].dt.date.isin(val_dates)
+                test_indices = self.observations["start"].dt.date.isin(test_dates)
+
+                # filter instruments
+                if len(self.filter_instruments):
+                    train_indices = train_indices & self.observations["instrument"].isin(self.filter_instruments)
+                    val_indices = val_indices & self.observations["instrument"].isin(self.filter_instruments)
+                    test_indices = test_indices & self.observations["instrument"].isin(self.filter_instruments)
+
+                # Check if the distribution of bursts is more or less balanced
+
+                total_num_bursts = sum(self.observations["label"] != "no_burst")
+                val_num_bursts = sum(self.observations[val_indices]["label"] != "no_burst")
+                test_num_bursts = sum(self.observations[test_indices]["label"] != "no_burst")
+                min_val_bursts = math.ceil((self.val_ratio * total_num_bursts) * self.min_factor_val_test)
+                min_test_bursts = math.ceil((self.test_ratio * total_num_bursts) * self.min_factor_val_test)
+                max_val_bursts = math.floor((self.val_ratio * total_num_bursts) * self.max_factor_val_test)
+                max_test_bursts = math.floor((self.test_ratio * total_num_bursts) * self.max_factor_val_test)
+
+                continue_loop = False
+                if val_num_bursts < min_val_bursts:
+                    print(f"Not enough validation bursts ({val_num_bursts}), minimum {min_val_bursts} needed")
+                    continue_loop = True
+                if test_num_bursts < min_test_bursts:
+                    print(f"Not enough test bursts ({test_num_bursts}), minimum {min_test_bursts} needed")
+                    continue_loop = True
+                if val_num_bursts > max_val_bursts:
+                    print(f"Too many validation bursts ({val_num_bursts}), maximum {max_val_bursts} allowed")
+                    continue_loop = True
+                if test_num_bursts > max_test_bursts:
+                    print(f"Too many test bursts ({test_num_bursts}), maximum {max_test_bursts} allowed")
+                    continue_loop = True
+                if not continue_loop:
+                    print("Dataset split successfully")
+                    print(f"Train:\t\t{total_num_bursts - val_num_bursts - test_num_bursts} bursts")
+                    print(f"Validation:\t{val_num_bursts} bursts")
+                    print(f"Test:\t\t{test_num_bursts} bursts")
+                    break
+
+                print("Reshuffling...\n")
+
+            train_dataset = self.observations[train_indices]
+            val_dataset = self.observations[val_indices]
+            test_dataset = self.observations[test_indices]
+
+            # Anpassung der Anzahl No-Bursts an Burst-Anzahl
+            bursts = train_dataset[train_dataset["label"] != "no_burst"]
+            nobursts = train_dataset[train_dataset["label"] == "no_burst"]
+            nobursts = nobursts.sample(
+                n=math.ceil(self.noburst_to_burst_ratio * len(bursts)),
+                replace=False,
             )
-
-            train_dates = dates[indices[0].indices]
-            val_dates = dates[indices[1].indices]
-            test_dates = dates[indices[2].indices]
-
-            train_indices = self.observations["start"].dt.date.isin(train_dates)
-            val_indices = self.observations["start"].dt.date.isin(val_dates)
-            test_indices = self.observations["start"].dt.date.isin(test_dates)
-
-            # filter instruments
-            if len(self.filter_instruments):
-                train_indices = train_indices & self.observations["instrument"].isin(self.filter_instruments)
-                val_indices = val_indices & self.observations["instrument"].isin(self.filter_instruments)
-                test_indices = test_indices & self.observations["instrument"].isin(self.filter_instruments)
+            train_dataset = pd.concat([bursts, nobursts], ignore_index=True)
 
             # create datasets
-            self.train_dataset = ECallistoDataset(self.observations[train_indices], transform=self.transform)
-            self.val_dataset = ECallistoDataset(self.observations[val_indices], transform=self.transform)
-            self.test_dataset = ECallistoDataset(self.observations[test_indices], transform=self.transform)
+            self.train_dataset = ECallistoDataset(train_dataset, transform=self.transform)
+            self.val_dataset = ECallistoDataset(val_dataset, transform=self.transform)
+            self.test_dataset = ECallistoDataset(test_dataset, transform=self.transform)
 
         # dont split by date, stratify by label
         else:
@@ -138,6 +192,15 @@ class ECallistoDataModule(L.LightningDataModule):
                 train_dataset = train_dataset[train_dataset["instrument"].isin(self.filter_instruments)]
                 val_dataset = val_dataset[val_dataset["instrument"].isin(self.filter_instruments)]
                 test_dataset = test_dataset[test_dataset["instrument"].isin(self.filter_instruments)]
+
+            # Anpassung der Anzahl No-Bursts an Burst-Anzahl
+            bursts = train_dataset[train_dataset["label"] != "no_burst"]
+            nobursts = train_dataset[train_dataset["label"] == "no_burst"]
+            nobursts = nobursts.sample(
+                n=math.ceil(self.noburst_to_burst_ratio * len(bursts)),
+                replace=False,
+            )
+            train_dataset = pd.concat([bursts, nobursts], ignore_index=True)
 
             # create datasets
             self.train_dataset = ECallistoDataset(train_dataset, transform=self.transform)
