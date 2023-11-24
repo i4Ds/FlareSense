@@ -8,25 +8,39 @@ from torchvision.models import vit_b_16
 from torchmetrics.classification import BinaryPrecision, BinaryRecall
 
 class ViTB16BinaryClassifier(pl.LightningModule):
-    def __init__(self, lr=1e-3, weight_decay=1e-4):
+    def __init__(self, lr=1e-4, weight_decay=1e-4):
         super().__init__()
         self.lr = lr
         self.weight_decay = weight_decay
         
         # ViT B-16 Modell laden
         self.vit_b_16 = vit_b_16(weights=models.ViT_B_16_Weights.DEFAULT)
-        num_features = self.vit_b_16.heads[0].in_features
-        self.vit_b_16.heads[0] = nn.Sequential(nn.Linear(num_features, 1), nn.Sigmoid())
+
+        # Parameter freezen
+        for param in self.vit_b_16.parameters():
+            param.requires_grad = False
+
+        # Die letzten Encoder-Layer unfreezen
+        for layer in [self.vit_b_16.encoder.layers.encoder_layer_10, 
+                      self.vit_b_16.encoder.layers.encoder_layer_11]:
+            for param in layer.parameters():
+                param.requires_grad = True
+
+        # Output zu binär umwandeln
+        self.vit_b_16.heads = nn.Sequential(nn.Linear(768, 1), nn.Sigmoid())
 
         # Metriken
         self.precision = BinaryPrecision(threshold=0.5)
         self.recall = BinaryRecall(threshold=0.5)
 
         # Label- und Vorhersagelisten
+        self.train_loss = []
         self.train_labels = []
         self.train_preds = []
+        self.val_loss = []
         self.val_labels = []
         self.val_preds = []
+        self.test_loss = []
         self.test_labels = []
         self.test_preds = []
 
@@ -50,8 +64,7 @@ class ViTB16BinaryClassifier(pl.LightningModule):
 
         self.train_labels.append(binary_labels)
         self.train_preds.append(outputs)
-
-        self.log("train_loss", loss, prog_bar=True, logger=True, batch_size=len(batch))
+        self.train_loss.append(loss)
         return loss
     
     def on_train_epoch_end(self):
@@ -61,11 +74,13 @@ class ViTB16BinaryClassifier(pl.LightningModule):
         train_precision = self.precision(train_preds, train_labels)
         train_recall = self.recall(train_preds, train_labels)
 
+        self.log("train_loss", torch.stack(self.train_loss).sum(), prog_bar=True, logger=True)
         self.log("train_precision", train_precision, prog_bar=True, logger=True)
         self.log("train_recall", train_recall, prog_bar=True, logger=True)
 
         self.train_labels = []
         self.train_preds = [] 
+        self.train_loss = []
     
     def validation_step(self, batch, batch_idx):
         outputs, binary_labels = self.__step(batch)
@@ -74,8 +89,7 @@ class ViTB16BinaryClassifier(pl.LightningModule):
         predictions = (outputs >= 0.5).int()
         self.val_labels.append(binary_labels.int())
         self.val_preds.append(predictions)
-
-        self.log("val_loss", loss, prog_bar=True, logger=True, batch_size=len(batch))
+        self.val_loss.append(loss)
         return loss
     
     def on_validation_epoch_end(self):
@@ -85,11 +99,13 @@ class ViTB16BinaryClassifier(pl.LightningModule):
         val_precision = self.precision(val_preds, val_labels)
         val_recall = self.recall(val_preds, val_labels)
 
+        self.log("val_loss", torch.stack(self.val_loss).sum(), prog_bar=True, logger=True)
         self.log("val_precision", val_precision, prog_bar=True, logger=True)
         self.log("val_recall", val_recall, prog_bar=True, logger=True)
 
         self.val_labels = []
         self.val_preds = []
+        self.val_loss = []
 
     def test_step(self, batch, batch_idx):
         outputs, binary_labels = self.__step(batch)
@@ -97,8 +113,7 @@ class ViTB16BinaryClassifier(pl.LightningModule):
 
         self.test_labels.append(binary_labels)
         self.test_preds.append(outputs)
-
-        self.log("test_loss", loss, prog_bar=True, logger=True, batch_size=len(batch))
+        self.test_loss.append(loss)
         return loss
 
     def on_test_epoch_end(self):
@@ -108,11 +123,13 @@ class ViTB16BinaryClassifier(pl.LightningModule):
         test_precision = self.precision(test_preds, test_labels)
         test_recall = self.recall(test_preds, test_labels)
 
+        self.log("test_loss", torch.stack(self.test_loss).sum(), prog_bar=True, logger=True)
         self.log("test_precision", test_precision, prog_bar=True, logger=True)
         self.log("test_recall", test_recall, prog_bar=True, logger=True)
 
         self.test_labels = []
         self.test_preds = []
+        self.test_loss = []
 
     def configure_optimizers(self):
-        return optim.Adam(self.parameters(), lr=self.lr, weight_decay=self.weight_decay)
+        return optim.SGD(self.parameters(), lr=self.lr, weight_decay=self.weight_decay)

@@ -146,13 +146,14 @@ class ECallistoDataModule(L.LightningDataModule):
             test_dataset = self.observations[test_indices]
 
             # Anpassung der Anzahl No-Bursts an Burst-Anzahl
-            bursts = train_dataset[train_dataset["label"] != "no_burst"]
-            nobursts = train_dataset[train_dataset["label"] == "no_burst"]
-            nobursts = nobursts.sample(
-                n=math.ceil(self.noburst_to_burst_ratio * len(bursts)),
-                replace=False,
-            )
-            train_dataset = pd.concat([bursts, nobursts], ignore_index=True)
+            if self.noburst_to_burst_ratio != float('inf'):
+                bursts = train_dataset[train_dataset["label"] != "no_burst"]
+                nobursts = train_dataset[train_dataset["label"] == "no_burst"]
+                nobursts = nobursts.sample(
+                    n=math.ceil(self.noburst_to_burst_ratio * len(bursts)),
+                    replace=False,
+                )
+                train_dataset = pd.concat([bursts, nobursts], ignore_index=True)
 
             # create datasets
             self.train_dataset = ECallistoDataset(train_dataset, transform=self.transform)
@@ -194,13 +195,14 @@ class ECallistoDataModule(L.LightningDataModule):
                 test_dataset = test_dataset[test_dataset["instrument"].isin(self.filter_instruments)]
 
             # Anpassung der Anzahl No-Bursts an Burst-Anzahl
-            bursts = train_dataset[train_dataset["label"] != "no_burst"]
-            nobursts = train_dataset[train_dataset["label"] == "no_burst"]
-            nobursts = nobursts.sample(
-                n=math.ceil(self.noburst_to_burst_ratio * len(bursts)),
-                replace=False,
-            )
-            train_dataset = pd.concat([bursts, nobursts], ignore_index=True)
+            if self.noburst_to_burst_ratio != float('inf'):
+                bursts = train_dataset[train_dataset["label"] != "no_burst"]
+                nobursts = train_dataset[train_dataset["label"] == "no_burst"]
+                nobursts = nobursts.sample(
+                    n=math.ceil(self.noburst_to_burst_ratio * len(bursts)),
+                    replace=False,
+                )
+                train_dataset = pd.concat([bursts, nobursts], ignore_index=True)
 
             # create datasets
             self.train_dataset = ECallistoDataset(train_dataset, transform=self.transform)
