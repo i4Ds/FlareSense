@@ -81,7 +81,7 @@ class DefaultBinaryModel(pl.LightningModule):
         train_precision = self.precision(train_preds, train_labels)
         train_recall = self.recall(train_preds, train_labels)
 
-        self.log("train_loss", torch.stack(self.train_loss).sum(), prog_bar=True, logger=True)
+        self.log("train_loss", torch.stack(self.train_loss).mean(), prog_bar=True, logger=True)
         self.log("train_precision", train_precision, prog_bar=True, logger=True)
         self.log("train_recall", train_recall, prog_bar=True, logger=True)
 
@@ -96,7 +96,7 @@ class DefaultBinaryModel(pl.LightningModule):
         val_precision = self.precision(val_preds, val_labels)
         val_recall = self.recall(val_preds, val_labels)
 
-        self.log("val_loss", torch.stack(self.val_loss).sum(), prog_bar=True, logger=True)
+        self.log("val_loss", torch.stack(self.val_loss).mean(), prog_bar=True, logger=True)
         self.log("val_precision", val_precision, prog_bar=True, logger=True)
         self.log("val_recall", val_recall, prog_bar=True, logger=True)
 
@@ -111,7 +111,7 @@ class DefaultBinaryModel(pl.LightningModule):
         test_precision = self.precision(test_preds, test_labels)
         test_recall = self.recall(test_preds, test_labels)
 
-        self.log("test_loss", torch.stack(self.test_loss).sum(), prog_bar=True, logger=True)
+        self.log("test_loss", torch.stack(self.test_loss).mean(), prog_bar=True, logger=True)
         self.log("test_precision", test_precision, prog_bar=True, logger=True)
         self.log("test_recall", test_recall, prog_bar=True, logger=True)
 

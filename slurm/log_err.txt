@@ -1,8 +1,8 @@
 Input Notebook:  00-Unzip.ipynb
 Output Notebook: 00-Unzip.ipynb
 Executing:   0%|          | 0/2 [00:00<?, ?cell/s]Executing notebook with kernel: python3
-Executing:  50%|█████     | 1/2 [00:02<00:02,  2.30s/cell]Executing: 100%|██████████| 2/2 [00:02<00:00,  1.21s/cell]
-Input Notebook:  05-ViT16.ipynb
-Output Notebook: 05-ViT16.ipynb
+Executing:  50%|█████     | 1/2 [00:02<00:02,  2.52s/cell]Executing: 100%|██████████| 2/2 [00:02<00:00,  1.32s/cell]
+Input Notebook:  06-ResNet18.ipynb
+Output Notebook: 06-ResNet18.ipynb
 Executing:   0%|          | 0/15 [00:00<?, ?cell/s]Executing notebook with kernel: python3
-Executing:   7%|▋         | 1/15 [00:02<00:29,  2.12s/cell]Executing:  20%|██        | 3/15 [00:09<00:40,  3.41s/cell]Executing:  40%|████      | 6/15 [00:20<00:30,  3.41s/cell]Executing:  53%|█████▎    | 8/15 [3:35:17<4:37:43, 2380.50s/cell]Executing:  73%|███████▎  | 11/15 [3:35:40<1:28:52, 1333.04s/cell]Executing:  87%|████████▋ | 13/15 [3:35:46<31:18, 939.41s/cell]   Executing: 100%|██████████| 15/15 [3:35:47<00:00, 660.35s/cell]Executing: 100%|██████████| 15/15 [3:35:51<00:00, 863.43s/cell]
+Executing:   7%|▋         | 1/15 [00:02<00:29,  2.13s/cell]Executing:  13%|█▎        | 2/15 [00:15<01:55,  8.90s/cell]Executing:  33%|███▎      | 5/15 [4:42:53<11:14:56, 4049.63s/cell]Executing:  40%|████      | 6/15 [4:42:53<7:33:01, 3020.15s/cell] Executing:  47%|████▋     | 7/15 [4:42:54<4:55:25, 2215.72s/cell]Executing:  53%|█████▎    | 8/15 [4:42:55<3:07:15, 1605.06s/cell]Executing:  60%|██████    | 9/15 [4:42:56<1:55:10, 1151.72s/cell]Executing:  67%|██████▋   | 10/15 [4:42:57<1:08:23, 820.73s/cell]Executing:  73%|███████▎  | 11/15 [4:43:02<38:53, 583.31s/cell]  Executing:  80%|████████  | 12/15 [4:43:03<20:36, 412.15s/cell]Executing:  87%|████████▋ | 13/15 [4:43:06<09:42, 291.33s/cell]Executing:  93%|█████████▎| 14/15 [4:43:07<03:25, 205.04s/cell]Executing: 100%|██████████| 15/15 [4:43:09<00:00, 144.58s/cell]Executing: 100%|██████████| 15/15 [4:43:13<00:00, 1132.90s/cell]
