@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision.models as models
 from torchvision.models import vit_b_16
-from DefaultModel import DefaultBinaryModel
+from src.models.DefaultModel import DefaultBinaryModel
 
 
 class ViTB16BinaryClassifier(DefaultBinaryModel):

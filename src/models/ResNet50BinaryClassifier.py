@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch.optim as optim
 import torchvision.models as models
-from DefaultModel import DefaultBinaryModel
+from src.models.DefaultModel import DefaultBinaryModel
 
 
 class ResNet50BinaryClassifier(DefaultBinaryModel):
