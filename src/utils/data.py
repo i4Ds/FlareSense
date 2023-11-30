@@ -1,5 +1,6 @@
 import os
 import math
+import torch
 import torchvision
 import pandas as pd
 import lightning as L
@@ -86,6 +87,7 @@ class ECallistoDataModule(L.LightningDataModule):
 
             # if the imbalance is too big, try again
             while True:
+                torch.manual_seed(4)
                 indices = random_split(
                     dates,
                     [
@@ -171,6 +173,7 @@ class ECallistoDataModule(L.LightningDataModule):
                 num_val_samples = int(num_samples * self.val_ratio)
                 num_test_samples = int(num_samples * self.test_ratio)
 
+                torch.manual_seed(4)
                 indices = random_split(
                     label_indices,
                     [
