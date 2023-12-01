@@ -86,8 +86,9 @@ class ECallistoDataModule(L.LightningDataModule):
             num_test_samples = int(num_samples * self.test_ratio)
 
             # if the imbalance is too big, try again
+            counter = 0
             while True:
-                torch.manual_seed(4)
+                torch.manual_seed(counter)
                 indices = random_split(
                     dates,
                     [
@@ -141,26 +142,12 @@ class ECallistoDataModule(L.LightningDataModule):
                     print(f"Test:\t\t{test_num_bursts} bursts")
                     break
 
+                counter += 1
                 print("Reshuffling...\n")
 
             train_dataset = self.observations[train_indices]
             val_dataset = self.observations[val_indices]
             test_dataset = self.observations[test_indices]
-
-            # Anpassung der Anzahl No-Bursts an Burst-Anzahl
-            if self.noburst_to_burst_ratio != float('inf'):
-                bursts = train_dataset[train_dataset["label"] != "no_burst"]
-                nobursts = train_dataset[train_dataset["label"] == "no_burst"]
-                nobursts = nobursts.sample(
-                    n=math.ceil(self.noburst_to_burst_ratio * len(bursts)),
-                    replace=False,
-                )
-                train_dataset = pd.concat([bursts, nobursts], ignore_index=True)
-
-            # create datasets
-            self.train_dataset = ECallistoDataset(train_dataset, transform=self.transform)
-            self.val_dataset = ECallistoDataset(val_dataset, transform=self.transform)
-            self.test_dataset = ECallistoDataset(test_dataset, transform=self.transform)
 
         # dont split by date, stratify by label
         else:
@@ -197,20 +184,22 @@ class ECallistoDataModule(L.LightningDataModule):
                 val_dataset = val_dataset[val_dataset["instrument"].isin(self.filter_instruments)]
                 test_dataset = test_dataset[test_dataset["instrument"].isin(self.filter_instruments)]
 
-            # Anpassung der Anzahl No-Bursts an Burst-Anzahl
-            if self.noburst_to_burst_ratio != float('inf'):
-                bursts = train_dataset[train_dataset["label"] != "no_burst"]
-                nobursts = train_dataset[train_dataset["label"] == "no_burst"]
-                nobursts = nobursts.sample(
-                    n=math.ceil(self.noburst_to_burst_ratio * len(bursts)),
-                    replace=False,
-                )
-                train_dataset = pd.concat([bursts, nobursts], ignore_index=True)
+        # Anpassung der Anzahl No-Bursts an Burst-Anzahl
+        if self.noburst_to_burst_ratio > 0:
+            bursts = train_dataset[train_dataset["label"] != "no_burst"]
+            nobursts = train_dataset[train_dataset["label"] == "no_burst"]
+            nobursts = nobursts.sample(
+                n=math.ceil(self.noburst_to_burst_ratio * len(bursts)),
+                replace=False,
+            )
+            train_dataset = pd.concat([bursts, nobursts], ignore_index=True)
+        else:
+            print("noburst_to_burst_ratio was set to a negative number, using all data")
 
-            # create datasets
-            self.train_dataset = ECallistoDataset(train_dataset, transform=self.transform)
-            self.val_dataset = ECallistoDataset(val_dataset, transform=self.transform)
-            self.test_dataset = ECallistoDataset(test_dataset, transform=self.transform)
+        # create datasets
+        self.train_dataset = ECallistoDataset(train_dataset, transform=self.transform)
+        self.val_dataset = ECallistoDataset(val_dataset, transform=self.transform)
+        self.test_dataset = ECallistoDataset(test_dataset, transform=self.transform)
 
     def train_dataloader(self):
         return DataLoader(
