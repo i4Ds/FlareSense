@@ -1,9 +1,9 @@
 #!/bin/sh
-#SBATCH --time=10:00:00
+#SBATCH --time=16:00:00
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
 #SBATCH --gres=gpu:1
-#SBATCH --partition=performance
+#SBATCH --partition=top6
 #SBATCH --out=slurm/log_out.txt
 #SBATCH --err=slurm/log_err.txt
 #SBATCH --job-name="FlareSense"
