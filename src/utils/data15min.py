@@ -64,10 +64,20 @@ class ECallistoDataModule(L.LightningDataModule):
         self.filter_instruments = filter_instruments
         self.seed = seed
 
-        self.metadata = pd.read_csv(os.path.join(self.data_folder, "metadata.csv"))
+        self.metadata = pd.read_csv(
+            os.path.join(self.data_folder, "metadata.csv"), parse_dates=["datetime_start", "datetime_end"]
+        )
 
     def setup(self, stage=None):
-        # filter augmentated data (only use files named "1.parquet")
+        # filter out where data is under 14 minutes and over 16 minutes
+        self.metadata = self.metadata.loc[
+            (self.metadata.datetime_end - self.metadata.datetime_start).dt.total_seconds() >= 14 * 60
+        ]
+        self.metadata = self.metadata.loc[
+            (self.metadata.datetime_end - self.metadata.datetime_start).dt.total_seconds() <= 16 * 60
+        ]
+
+        # filter augmentated data (only use files named "1.parquet") # may have bias
         if not self.use_augmented_data:
             self.metadata = self.metadata.loc[self.metadata.file_name.str.split("/").str[-1] == "1.parquet"]
 
