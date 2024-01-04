@@ -1,8 +1,4 @@
-Input Notebook:  00-Unzip.ipynb
-Output Notebook: 00-Unzip.ipynb
-Executing:   0%|          | 0/2 [00:00<?, ?cell/s]Executing notebook with kernel: python3
-Executing:  50%|█████     | 1/2 [00:02<00:02,  2.38s/cell]Executing: 100%|██████████| 2/2 [00:02<00:00,  1.30s/cell]
-Input Notebook:  06-ResNet18.ipynb
-Output Notebook: 06-ResNet18.ipynb
-Executing:   0%|          | 0/15 [00:00<?, ?cell/s]Executing notebook with kernel: python3
-Executing:   7%|▋         | 1/15 [00:06<01:36,  6.89s/cell]Executing:  13%|█▎        | 2/15 [00:17<01:56,  8.98s/cell]Executing:  20%|██        | 3/15 [00:20<01:17,  6.46s/cell]Executing:  27%|██▋       | 4/15 [00:24<00:57,  5.20s/cell]Executing:  33%|███▎      | 5/15 [5:08:43<18:32:25, 6674.53s/cell]Executing:  40%|████      | 6/15 [5:08:47<11:00:57, 4406.38s/cell]Executing:  47%|████▋     | 7/15 [5:08:51<6:35:36, 2967.07s/cell] Executing:  53%|█████▎    | 8/15 [5:08:54<3:56:05, 2023.61s/cell]Executing:  60%|██████    | 9/15 [5:08:58<2:19:12, 1392.16s/cell]Executing:  67%|██████▋   | 10/15 [5:09:01<1:20:17, 963.45s/cell]Executing:  73%|███████▎  | 11/15 [5:09:10<44:44, 671.06s/cell]  Executing:  80%|████████  | 12/15 [5:09:13<23:24, 468.04s/cell]Executing:  87%|████████▋ | 13/15 [5:09:19<10:55, 327.87s/cell]Executing:  93%|█████████▎| 14/15 [5:09:22<03:49, 229.88s/cell]Executing: 100%|██████████| 15/15 [5:09:26<00:00, 161.91s/cell]Executing: 100%|██████████| 15/15 [5:09:30<00:00, 1238.04s/cell]
+Input Notebook:  10-ResNet50.ipynb
+Output Notebook: 10-ResNet50.ipynb
+Executing:   0%|          | 0/7 [00:00<?, ?cell/s]Executing notebook with kernel: python3
+Executing:  14%|█▍        | 1/7 [00:03<00:20,  3.38s/cell]Executing:  29%|██▊       | 2/7 [00:22<01:03, 12.68s/cell]Executing:  57%|█████▋    | 4/7 [00:23<00:14,  4.97s/cell]Executing:  71%|███████▏  | 5/7 [00:28<00:10,  5.06s/cell]Executing:  86%|████████▌ | 6/7 [00:28<00:03,  3.56s/cell]Executing: 100%|██████████| 7/7 [46:37:26<00:00, 51101.47s/cell]Executing: 100%|██████████| 7/7 [46:37:30<00:00, 23978.59s/cell]
