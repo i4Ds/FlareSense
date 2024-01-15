@@ -18,15 +18,16 @@ Hier geht es zum Projekt Taskboard mit allen Tasks und Issues:
 
 [Link zum Taskboard](https://github.com/orgs/i4Ds/projects/11)
 
-## Diskussionen
-Um Fragen, Ideen oder Wünsche zu stellen, kann man das bei den "Discussions" machen:
-
-[Link zu den Discussions](https://github.com/i4Ds/FlareSense/discussions)
-
 ## Zotero
 Hier geht es zu unserer Zotero Gruppe:
 
 [Link zu Zotero](https://www.zotero.org/groups/5202251/pro5d_23hs_i4ds22/library)
+
+## Dataset
+Hier geht es zum 15 Minuten Dataset:
+[Link zum Dataset](https://huggingface.co/datasets/StellarMilk/ecallisto-bursts)
+
+Notiz: Der Datensatz wird bei einigen Notebooks automatisch heruntergeladen.
 
 ## DagsHub
 Hier geht es zu unserer DagsHub Organisation: 
@@ -53,7 +54,7 @@ Before committing changes to the data folder, make sure to run `make relink` to 
 Afterwards, add, commit and push the changes to the repo (using git).
 Finally, run `make push` to push the data to DagsHub.
 
-## Project Organization
+## Projekt Organisation
 
     ├── .dvc               <- DVC Settings, don't touch.
     ├── data
