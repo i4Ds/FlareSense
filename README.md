@@ -36,18 +36,20 @@ Hier geht es zu unserer DagsHub Organisation:
 ## Repository Setup Instructions
 1. Clone the repo.
 2. Run `make reqs` to install required python packages.
+
+### If you want to use DagsHub:
 3. Setup the DVC credentials using DagsHub.
 ![Setup DVC Credentials](https://i.imgur.com/BgCl22U.png)
 4. Run `make pull` to pull the data from DagsHub.
 5. You're ready to start developing!
 
-## Datamanagement
+### Datamanagement with DagsHub
 The data in this repo is managed via DVC. Here are some useful commands:
 - `make pull` - Pulls the data from DagsHub.
 - `make relink` - After changes in the DVC Folders (data) this command relinks the files in the repo.
 - `make push` - Pushes the data to DagsHub.
 
-Before committing changes to the repo, make sure to run `make relink` to update the links to the data.
+Before committing changes to the data folder, make sure to run `make relink` to update the links to the data.
 Afterwards, add, commit and push the changes to the repo (using git).
 Finally, run `make push` to push the data to DagsHub.
 
@@ -61,6 +63,7 @@ Finally, run `make push` to push the data to DagsHub.
     │                         and a short `-` delimited description, e.g.
     │                         `01-initial-data-exploration`.
     ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
+    ├── slurm              <- Slurm scripts for running the code on the i4Ds cluster.
     ├── src                <- Source code for use in this project.
     ├── .dvcignore         <- Files and directories to ignore by DVC.
     ├── .gitignore         <- Files and directories to ignore by Git.
