@@ -8,11 +8,6 @@ Dieses Projekt wird von folgenden Studenten bearbeitet:
 | Patrick Schürmann    | [@patschue](https://github.com/patschue)                     |
 | Gabriel Torres Gamez | [@gabrieltorresgamez](https://github.com/gabrieltorresgamez) |
 
-## Dokumentation
-Hier geht es zur Dokumentation:
-
-[Link zur Wiki](https://github.com/i4Ds/FlareSense/wiki)
-
 ## Taskboard
 Hier geht es zum Projekt Taskboard mit allen Tasks und Issues:
 
